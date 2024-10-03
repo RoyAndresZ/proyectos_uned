@@ -1,8 +1,22 @@
+/*
+                Autor: Roy Andres Zarate Ferreto
+                Fecha: 2 de Octubre del 2024
+                Proyecto 1
+                Ref.:Libro de Programacion c++ pag.108 a 115
+                     Sesion virtual 1- Tutor:Alexander Angeline Mora
+                     Sesion virtual 1- Brayner Gerardo Salmerón Castillo
+
+
+
+
+*/
 #include <iostream> // Para entrada y Salida
 #include <iomanip>  // Para manejar los decimales
 #include <string>   // Trabajar con String
 #include <cstdlib>  // Para usar el comando system("cls") o system("clear")
 #include <cctype>   // Para Funciones que manejan caracteres como toupper,isdigit
+#include <thread>   // Para usar std::this_thread::sleep_for
+#include <chrono>   // Para usar std::chrono::seconds
 
 using namespace std; // Para evitar el uso del prefijo std::
 const float IVA = 0.13;
@@ -59,30 +73,31 @@ int main(){
         limpiarPantalla(); // Limpiar pantalla al inicio del ciclo
 
         // Mostrar Menú
-        cout << "          Menu        " << endl;
-        cout << " 1. Ingrese Datos       " << endl;
-        cout << " 2. Recibo de Consumo   " << endl;
-        cout << " 3. Salir del Programa  " << endl;
-        cout << "  Seleccione una opción: ";
+        cout << "          Menu        \n" ;
+        cout << " 1. Ingrese Datos       \n" ;
+        cout << " 2. Recibo de Consumo   \n" ;
+        cout << " 3. Salir del Programa  \n" ;
         cin  >> opcion;
+
+        // Opcion 1 ingresar los datos
 
         switch(opcion) {
         case '1':
             {
 
-            limpiarPantalla(); // Limpiar pantalla antes de ingresar datos
+            limpiarPantalla();
         while (true){
             cout << "Ingrese el número de cédula del dueño del servicio (9 dígitos): ";
                 cin >> cedula;
 
-            if (cedula.length() != 9 || !esNumero(cedula))
-            {
+            if (cedula.length() != 9 || !esNumero(cedula)){ // verificar que cedula contenga numeros y sea 9 digitos
+
                 limpiarPantalla();
                 cout << "Valor de cedula incorrecto.\n";
             }else{
                 break; // Rompe si los datos son incorrectos
+                }
             }
-        }
            limpiarPantalla();
             cout << "Cédula           : " << cedula << "\n";
 
@@ -146,19 +161,24 @@ int main(){
             cout << "Metro Cubicos    : " << metrosCubicos << "\n";
             cout << "Exento de IVA    : " << (excentoIVA == 'S' ? "Sí" : "No") << "\n";
 
+            datos_ingresados = true; // Marca que los datos fueron ingresados correctamente
 
             // Preguntar si desea volver a ingresar datos o salir al menú
             char continuar;
             cout << "¿Desea volver a ingresar datos? (s/n): ";
             cin >> continuar;
 
-                if (continuar != 's' && continuar != 'S') {
-
+                if (continuar == 's' || continuar == 'S') {
+                    cout << "Volviendo a Ingresar Datos Seleccione opcion 1 en el menú \n" ;
+                     system("pause");
+                    break;
+                }else if (continuar == 'n'|| continuar == 'N'){
+                    cout << "Selecione opcion 2 en el menú para ver la Factura\n";
+                     system("pause");
+                    break;
                 }
 
-            datos_ingresados = true; // Marca que los datos fueron ingresados correctamente
-            cout << "Datos ingresados correctamente.\n";
-            break; // Salir del case 1
+
         }
 
 
@@ -210,6 +230,24 @@ int main(){
             cout << "         TOTAL a Pagar en colones  : ¢" << totalapagar << "\n";
 
             system("pause");
+
+            char volverMenu;
+            cout << "¿Desea volver al Menú? (s/n): ";
+            cin >> volverMenu;
+
+                if (volverMenu == 's' || volverMenu == 'S') {
+            cout << "Saliendo del programa...\n";
+                break;
+                } else if (volverMenu == 'n' || volverMenu == 'N') {
+            cout << "Menú de Factura. Esperando 10 segundos...\n";
+            // Espera 3 segundos antes de continuar
+            this_thread::sleep_for(chrono::seconds(10));
+                break;  // Si no quiere regresar, se sale del bucle
+                } else {
+                    cout << "Opción no válida. Por favor, responde con 's' o 'n'.\n" ;
+                    }
+
+             while (true);  // Continuar mientras quiera regresar al menú
 
         case '3':
             limpiarPantalla();
