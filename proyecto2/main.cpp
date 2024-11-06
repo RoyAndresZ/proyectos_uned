@@ -37,6 +37,7 @@ public:
 
 // Declaración de funciones
 void limpiarPantalla();
+void ingresarPieza();
 void reportePedidos();
 void reporteInventario();
 void ingresoPedido();
@@ -48,8 +49,69 @@ bool validarNumeroPedido(const string & pedido);
 bool validarNumeroPieza(const string & pieza);
 
 
+void limpiarPantalla() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
+bool validarNumeroPieza(const string &pieza) {
+    if (pieza.length() != 9 || pieza[0] != 'P') return false;
+    for (size_t i = 1; i < pieza.length(); ++i) {
+        if (!isdigit(pieza[i])) return false;
+    }
+    return true;
+}
+
+void ingresarPieza() {
+    string numeroPieza;
+    string costoPieza;
+    string cantidaPiezas;
+    string cedulaIngreso;
+    string facturaEmpresa;
+    string nombrePieza;
+    string nombreEmpresa;
+
+    cout << "Ingresando pieza al inventario..." << endl;
+    cout << "Código de pieza (ej. P00000001): " << endl;
+    cin >> numeroPieza;
+
+    if (!validarNumeroPieza(numeroPieza)) {
+        cout << "Número de pieza inválido. Intente nuevamente" << endl;
+        system ("pause");
+        ingresarPieza();
+    }
+    cout << "Nombre de la pieza: ";
+    cin >> nombrePieza;
+    cout << "Costo de la pieza por unidad: ";
+    cin >> costoPieza;
+    cout << "Cantidad de piezas: ";
+    cin >> cantidaPiezas;
+    cout << "Nombre de la Empresa que provee las piezas: ";
+    cin >> nombreEmpresa;
+    cout << "Factura de la empresa que provee las piezas: ";
+    cin >> facturaEmpresa;
+    cout << "Número de cédula de quien ingresa las piezas al inventario: ";
+    cin >> cedulaIngreso;
+
+    ofstream Inventario("INVENTARIO.TXT", ios::app);
+    if (Inventario.is_open()) {
+        Inventario << numeroPieza << "," << nombrePieza << "," << costoPieza << "," << cantidaPiezas << "," << nombreEmpresa << "," << facturaEmpresa << "," << cedulaIngreso << "," << endl;
+        cout << "Pedido ingresado correctamente." << endl;
+        system ("pause");
+        limpiarPantalla();
+    } else {
+        cout << "Error al abrir INVENTARIO.TXT" << endl;
+    }
+    Inventario.close();
+
+}
+
 void consultarPieza() {
     string codigoBusqueda;
+    cout << "Consultando pieza del inventario..." << endl;
     cout << "Ingrese el código de la pieza: ";
     cin >> codigoBusqueda;
 
@@ -111,6 +173,9 @@ void consultarPieza() {
             cout << "Factura: " << pieza.factura << endl;
             cout << "Cédula de ingreso: " << pieza.cedula << endl;
 
+            system("pause");
+            limpiarPantalla();
+
             encontrada = true;
             break;
         }
@@ -125,13 +190,6 @@ void consultarPieza() {
 
 
 
-void limpiarPantalla() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
-}
 
 // Función para consultar un pedido de manera más eficiente usando stringstream
 void consultaPedido() {
@@ -245,13 +303,7 @@ bool validarNumeroPedido(const string &pedido) {
     return true;
 }
 
-bool validarNumeroPieza(const string &pieza) {
-    if (pieza.length() != 9 || pieza[0] != 'P') return false;
-    for (size_t i = 1; i < pieza.length(); ++i) {
-        if (!isdigit(pieza[i])) return false;
-    }
-    return true;
-}
+
 
 void reporteInventario() {
     ifstream inventario("INVENTARIO.TXT");
@@ -320,63 +372,25 @@ int main() {
                     cout << "b. Consultar pieza del inventario" << endl;
                     cout << "c. Modificar pieza del inventario" << endl;
                     cout << "d. Eliminar pieza del inventario" << endl;
+                    cout << "e. Volver al menu principal" << endl;
                     cout << "Seleccione una opción: ";
                     cin >> opcion;
                     switch(opcion){
                     limpiarPantalla();
 
                     case 'a':{
-
-                        string numeroPieza;
-                        int costoPieza;
-                        int cantidaPiezas;
-                        int cedulaIngreso;
-                        int facturaEmpresa;
-                        string NombrePieza;
-                        string nombreEmpresa;
-                            cout << "Ingresando pieza al inventario..." << endl;
-                            cout << "Código de pieza (ej. P00000001): ";
-                            cin >> numeroPieza;
-                                while (!validarNumeroPieza(numeroPieza)) {
-                                cout << "Número de pedido inválido. Intente nuevamente: ";
-                                cin >> numeroPieza;
-                            }
-
-                            cout << "Nombre de la pieza: ";
-                            cin >> NombrePieza;
-                            cout << "Costo de la pieza por unidad: ";
-                            cin >> costoPieza;
-                            cout << "Cantidad de piezas: ";
-                            cin >> cantidaPiezas;
-                            cout << "Nombre de la Empresa que provee las piezas: ";
-                            cin >> nombreEmpresa;
-                            cout << "Factura de la empresa que provee las piezas: ";
-                            cin >> facturaEmpresa;
-                            cout << "Número de cédula de quien ingresa las piezas al inventario: ";
-                            cin >> cedulaIngreso;
-
-
-                            ofstream Inventario("INVENTARIO.TXT", ios::app);
-                            if (Inventario.is_open()) {
-                                Inventario << numeroPieza << "," << NombrePieza << "," << costoPieza << "," << cantidaPiezas << "," << nombreEmpresa << "," << facturaEmpresa << "," << cedulaIngreso << "," << endl;
-                                cout << "Pedido ingresado correctamente." << endl;
-                            } else {
-                                cout << "Error al abrir INVENTARIO.TXT" << endl;
-                            }
-                            Inventario.close();
-                            break;
-                        }
-
-
+                        limpiarPantalla();
+                        ingresarPieza();
+                        break;
+                    }
                     case 'b':
-                        cout << "Consultando pieza del inventario..." << endl;
-                            consultarPieza();
+                        limpiarPantalla();
+                        consultarPieza();
                         break;
 
                     case 'c':
                         cout << "Modificando pieza del inventario..." << endl;
-                            modificarPieza();
-
+                        modificarPieza();
                         break;
 
                     case 'd':
@@ -385,7 +399,8 @@ int main() {
                         break;
 
                     case 'e':
-                        cout << "Saliendo del programa...\n";
+                        cout << "Volviendo al menu principal \n";
+                        limpiarPantalla();
                         break;
 
 
@@ -393,7 +408,8 @@ int main() {
                         cout << "Opción inválida, intente de nuevo." << endl;
                         system ("pause");
                         limpiarPantalla();
-                     }     break;
+                        opcionPrincipal = 1;
+                     }
                     }while (opcion != 'e');
                     break;
 
@@ -463,7 +479,7 @@ int main() {
                         break;
 
                     default:
-                            cout << "Opción inválida, intente de nuevo." << endl;
+                            cout << "Opción inválida test2, intente de nuevo." << endl;
                             system ("pause");
                             limpiarPantalla();
                             }
@@ -490,7 +506,7 @@ int main() {
                 break;
                  limpiarPantalla();
             default:
-                cout << "Opción inválida, intente de nuevo." << endl;
+                cout << "Opción inválida test3, intente de nuevo." << endl;
                 break;
                 limpiarPantalla();
             }
