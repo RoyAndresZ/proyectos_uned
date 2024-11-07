@@ -61,7 +61,7 @@ void limpiarPantalla() {
     #endif
 }
 
-//____________________________________________________________________________________
+
 void guardarInventario() {
     ofstream file("INVENTARIO.TXT");
     for (const auto &pieza : inventario) {
@@ -232,9 +232,6 @@ void eliminarPieza() {
     remove("INVENTARIO.TXT");
     rename("TEMP.TXT", "INVENTARIO.TXT");
 }
-//____________________________________________________________________________________
-
-
 
 
 // Función para validar que el costo y cantidad sean numéricos
@@ -391,7 +388,7 @@ int main() {
     int ultimaPieza = obtenerUltimaPieza("INVENTARIO.TXT") + 1;
     int ultimoPedido = obtenerUltimoPedido("PEDIDOS.TXT") + 1;
     int opcionPrincipal;
-    char opcion;
+    char opcion,volver;
     char opcionsubMenu;
     char opcionsubMenupedido;
 
@@ -433,7 +430,8 @@ int main() {
                     switch(opcionsubMenu){
 
 
-                    case 'a':{
+                    case 'a':
+                        do{
                             Pieza pieza;
 
                             cout << "Ingresando pieza al inventario..." << endl;
@@ -495,36 +493,87 @@ int main() {
                                 cin >> pieza.cedula;
                                     if (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0])) {
                                   }  cout << "Cédula incorrecta, debe ser numérica y de 9 dígitos.\n";
-                            }           while (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0]));
+                                }          while (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0]));
 
                                 inventario.push_back(pieza);
                                 guardarInventario();
                                 cout << "Pieza ingresada correctamente." << endl;
-                            }
 
-                            break;
+                            cout << "¿Desea volver al menú Inventario? (s/n): ";
+                            cin >> volver;
+                            volver = toupper(volver);
+                            if(volver == 'S'){
+                                break;
+                            }else if (volver == 'N'){
+
+                            }else{
+                                cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                            }
+                           }while(volver!= 's') ;
+                           break;
+
 
                         limpiarPantalla();
 
 
                     case 'b':
+                        do{
                         cout << "Consultando pieza del inventario..." << endl;
                             consultarPieza();
-                        break;
+
+
+                        cout << "¿Desea volver al menú Inventario? (s/n): ";
+                        cin >> volver;
+                        volver = toupper(volver);
+                        if(volver == 'S'){
+                            break;
+                        }else if (volver == 'N'){
+
+                        }else{
+                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                        }
+                       }while(volver!= 's') ;
+                       break;
+
                             limpiarPantalla();
 
                     case 'c':
+                        do{
                         cout << "Modificando pieza del inventario..." << endl;
                             modificarPieza();
 
-                        break;
+                        cout << "¿Desea volver al menú Inventario? (s/n): ";
+                        cin >> volver;
+                        volver = toupper(volver);
+                        if(volver == 'S'){
+                            break;
+                        }else if (volver == 'N'){
+
+                        }else{
+                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                        }
+                       }while(volver!= 's') ;
+                       break;
+
                             limpiarPantalla();
 
                     case 'd':
+                        do{
                         cout << "Eliminando pieza del inventario..." << endl;
                         eliminarPieza();
 
-                        break;
+                        cout << "¿Desea volver al menú Inventario? (s/n): ";
+                        cin >> volver;
+                        volver = toupper(volver);
+                        if(volver == 'S'){
+                            break;
+                        }else if (volver == 'N'){
+
+                        }else{
+                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                        }
+                       }while(volver!= 's') ;
+                       break;
                             limpiarPantalla();
 
 
@@ -557,61 +606,154 @@ int main() {
                             cout << "a. Ingreso de pedido" << endl;
 
 
-                            do {
-                                cout << "¿Desea ingresar el código de pedido manualmente? (s/n): ";
-                                cin >> opcion;
-                                opcion = toupper(opcion);
+                                    do {
+                                        cout << "¿Desea ingresar el código de pedido manualmente? (s/n): ";
+                                        cin >> opcion;
+                                        opcion = toupper(opcion);
 
-                                if (opcion == 'S') {
-                                    cout << "Código de pedido (ej. PE00000001): ";
-                                    cin >> pedido.codigoPedido;
-                                    while (!validarNumeroPedido(pedido.codigoPedido)) {
-                                        cout << "Número de pedido inválido. Intente nuevamente: ";
-                                        cin >> pedido.codigoPedido;
-                                    }
-                                } else if (opcion == 'N') {
-                                    pedido.codigoPedido = generarCodigoPedido();
-                                    cout << "Código de pedido generado automáticamente: " << pedido.codigoPedido << endl;
-                                } else {
-                                    cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
-                                }
-                            } while (opcion != 'S' && opcion != 'N');
+                                        if (opcion == 'S') {
+                                            cout << "Código de pedido (ej. PE00000001): ";
+                                            cin >> pedido.codigoPedido;
+                                            while (!validarNumeroPedido(pedido.codigoPedido)) {
+                                                cout << "Número de pedido inválido. Intente nuevamente: ";
+                                                cin >> pedido.codigoPedido;
+                                            }
+                                        } else if (opcion == 'N') {
+                                            pedido.codigoPedido = generarCodigoPedido();
+                                            cout << "Código de pedido generado automáticamente: " << pedido.codigoPedido << endl;
+                                        } else {
+                                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                                        }
+                                        } while (opcion != 'S' && opcion != 'N');
 
 
                                 cout << "Código de pieza: ";
                                 cin >> pedido.codigoPieza;
-                                cout << "Cantidad: ";
+                                cout << "Cantidad de piezas a solicitar: ";
                                 cin >> pedido.cantidad;
-                                cout << "Cédula del empleado: ";
-                                cin >> pedido.cedulaEmpleado;
-                                cout << "Fecha (DD/MM/YYYY): ";
+
+                                do{cout << "Número de identificación del empleado: ";
+                                    cin >> pedido.cedulaEmpleado;
+                                    if (pedido.cedulaEmpleado.length() != 9 || !isdigit(pedido.cedulaEmpleado[0])) {
+                                    }   cout << "Cédula incorrecta, debe ser numérica y de 9 dígitos.\n";
+                                }while (pedido.cedulaEmpleado.length() != 9 || !isdigit(pedido.cedulaEmpleado[0]));
+
+                                cout << "Fecha solicitud, en formato(DD/MM/YYYY): ";
                                 cin >> pedido.fechaSolicitud;
                                 cout << "Estado del pedido: ";
-                                cin >> pedido.estado;
+                                pedido.estado = "En Proceso";
+                                 cout << pedido.estado <<endl;
 
                                 pedidos.push_back(pedido);
                                     guardarPedidos();
                                     cout << "Pedido ingresado correctamente." << endl;
-                                }
+                                do{
+                                cout << "¿Desea volver al menú Pedidos? (s/n): ";
+                                cin >> volver;
+                                volver = toupper(volver);
+                                if(volver == 'S'){
+                                    break;
+                                }else if (volver == 'N'){
 
-                            break;
+                                }else{
+                                    cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                                }
+                               }while(volver!= 's') ;
+                            }   break;
                         limpiarPantalla();
 
                     case 'b':
+                        do{
                         cout << "b. Consulta de pedido" << endl;
                         consultaPedido();
-                        break;
+                        cout << "¿Desea volver al menú Pedidos? (s/n): ";
+                        cin >> volver;
+                        volver = toupper(volver);
+                        if(volver == 'S'){
+                            break;
+                        }else if (volver == 'N'){
+
+                        }else{
+                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                        }
+                       }while(volver!= 's') ;
+                       break;
+
+
 
                     case 'c':
-                        cout << "c. Cancelar pedido" << endl;
+                        do{
+                            string codigoPedidoCancelar;
+                            cout << "c. Cancelar pedido" << endl;
+                            cout << "Ingrese el código de pedido para cancelar: ";
+                            cin >> codigoPedidoCancelar;
+
+                            bool encontrado = false;
+                            for (auto& pedido : pedidos) {
+                                if (pedido.codigoPedido == codigoPedidoCancelar) {
+                                    pedido.estado = "Cancelado";
+                                    cout << "Pedido " << codigoPedidoCancelar << " ha sido cancelado." << endl;
+                                    encontrado = true;
+                                    guardarPedidos();
+                                    break;
+                                }
+                            }
+                            if (!encontrado) {
+                                cout << "Pedido no encontrado." << endl;
+                            }
+
+
+                        cout << "¿Desea volver al menú Pedidos? (s/n): ";
+                        cin >> volver;
+                        volver = toupper(volver);
+                        if(volver == 'S'){
+                            break;
+                        }else if (volver == 'N'){
+
+                        }else{
+                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                        }
+                       }while(volver!= 's') ;
+                       break;
 
 
                         break;
 
                     case 'd':
+                        do{
+                        string codigoPedidoEntrega;
                         cout << "d. Registrar entrega de pedido" << endl;
+                        cout << "Ingrese el código de pedido para registrar entrega: ";
+                        cin >> codigoPedidoEntrega;
 
-                        break;
+                        bool encontrado = false;
+                        for (auto& pedido : pedidos) {
+                            if (pedido.codigoPedido == codigoPedidoEntrega) {
+                                pedido.estado = "Entregado";
+                                cout << "Pedido " << codigoPedidoEntrega << " ha sido marcado como entregado." << endl;
+                                encontrado = true;
+                                guardarPedidos();
+                                break;
+                            }
+                        }
+                        if (!encontrado) {
+                            cout << "Pedido no encontrado." << endl;
+                        }
+
+
+                        cout << "¿Desea volver al menú Pedidos? (s/n): ";
+                        cin >> volver;
+                        volver = toupper(volver);
+                        if(volver == 'S'){
+                            break;
+                        }else if (volver == 'N'){
+
+                        }else{
+                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+                        }
+                       }while(volver!= 's') ;
+                       break;
+
 
                     default:
                         limpiarPantalla();
