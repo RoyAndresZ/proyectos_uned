@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1730935643 source:c:\users\razf-\onedrive\documentos\protecto2 demo\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<string>
+	<cstdlib>
+	<cctype>
+	<limits>
+	<ctime>
+	<iomanip>
+	<windows.h>
+	<vector>
+
