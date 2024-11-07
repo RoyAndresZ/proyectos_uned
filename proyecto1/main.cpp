@@ -1,13 +1,10 @@
 /*
-                Autor: Roy Andres Zarate Ferreto
-                Fecha: 2 de Octubre del 2024
-                Proyecto 1
-                Ref.:Libro de Programacion c++ pag.108 a 115
-                     Sesion virtual 1- Tutor:Alexander Angeline Mora
-                     Sesion virtual 1- Brayner Gerardo Salmerón Castillo
-
-
-
+Autor: Roy Andres Zarate Ferreto
+Fecha: 2 de Octubre del 2024
+Proyecto 1
+Ref.:Libro de Programacion c++ pag.108 a 115
+Sesion virtual 1- Tutor:Alexander Angeline Mora
+Sesion virtual 1- Brayner Gerardo Salmerón Castillo
 
 */
 #include <iostream> // Para entrada y Salida
@@ -64,6 +61,7 @@ int main(){
     string nombre, cedula, medidor;
     char excentoIVA = 'N';
     char regresarMenu;
+    char volverMenu;
     bool datos_ingresados = false;
     double montoIVA = 0.0;
     char opcion;
@@ -88,7 +86,7 @@ int main(){
             limpiarPantalla();
         while (true){
             cout << "Ingrese el número de cédula del dueño del servicio (9 dígitos): ";
-                cin >> cedula;
+            cin >> cedula;
 
             if (cedula.length() != 9 || !esNumero(cedula)){ // verificar que cedula contenga numeros y sea 9 digitos
 
@@ -98,30 +96,30 @@ int main(){
                 break; // Rompe si los datos son incorrectos
                 }
             }
-           limpiarPantalla();
+            limpiarPantalla();
             cout << "Cédula           : " << cedula << "\n";
 
 
             cout << "Ingrese el nombre completo del dueño del servicio: ";
             cin.ignore();
             getline(cin, nombre);
-           limpiarPantalla ();
+            limpiarPantalla ();
 
             cout << "Cédula           : " << cedula << "\n";
             cout << "Nombre del dueño : " << nombre << "\n";
 
         while (true){
             cout << "Ingrese el número del medidor (6 dígitos): ";
-                cin >> medidor;
+            cin >> medidor;
 
-            if (medidor.length() != 6 || !esNumero(medidor)) { //
+            if (medidor.length() != 6 || !esNumero(medidor)) {
                 cout << "Valor del medidor incorrecto.\n";
             }else{
                 break;
 
             }
         }
-        limpiarPantalla ();
+            limpiarPantalla ();
 
             cout << "Cédula           : " << cedula << "\n";
             cout << "Nombre del dueño : " << nombre << "\n";
@@ -129,7 +127,9 @@ int main(){
         while (true){
 
             cout << "Ingrese el valor de metros cúbicos del medidor (valor numérico): ";
-                cin >> metrosCubicos;
+            cin >> metrosCubicos;
+
+
 
             if (cin.fail()) {  // Si la entrada no es un número válido
                 cin.clear();    // Limpia el estado de error de 'cin'
@@ -140,49 +140,68 @@ int main(){
                 }else{
                     break;  // Si la entrada es válida, salir del buclee
                 }
-        }
-        limpiarPantalla ();
+
+          }
+            limpiarPantalla ();
 
             cout << "Cédula           : " << cedula << "\n";
             cout << "Nombre del dueño : " << nombre << "\n";
             cout << "Numero de Medidor: " << medidor << "\n";
-            cout << "Metro Cubicos    : " << metrosCubicos << "\n";
+            cout << "Metros Cubicos    : " << metrosCubicos << "\n";
 
+         do{
             cout << "¿Está exento del IVA (S/N)? ";
             cin >> excentoIVA;
             excentoIVA = toupper(excentoIVA);
 
+                if(excentoIVA != 'S' && excentoIVA != 'N'){
+                cout << "Entrada no válida. Por favor ingrese 's' para sí o 'n' para no..\n";
+                cin >>excentoIVA;
+                }
+            }while (excentoIVA != 'S' && excentoIVA != 'N');
 
-        limpiarPantalla ();
+
+
+            limpiarPantalla ();
 
             cout << "Cédula           : " << cedula << "\n";
             cout << "Nombre del dueño : " << nombre << "\n";
             cout << "Numero de Medidor: " << medidor << "\n";
-            cout << "Metro Cubicos    : " << metrosCubicos << "\n";
+            cout << "Metros Cubicos    : " << metrosCubicos << "\n";
             cout << "Exento de IVA    : " << (excentoIVA == 'S' ? "Sí" : "No") << "\n";
 
             datos_ingresados = true; // Marca que los datos fueron ingresados correctamente
 
             // Preguntar si desea volver a ingresar datos o salir al menú
-            char continuar;
-            cout << "¿Desea volver a ingresar datos? (s/n): ";
-            cin >> continuar;
+            //char regresarMenu;
+        do{
+            cout << "¿Desea regresar al menú principal? (s/n): ";
+            cin >> regresarMenu;
+            regresarMenu = toupper(regresarMenu);
 
-                if (continuar == 's' || continuar == 'S') {
-                    cout << "Volviendo a Ingresar Datos Seleccione opcion 1 en el menú \n" ;
-                     system("pause");
-                    break;
-                }else if (continuar == 'n'|| continuar == 'N'){
-                    cout << "Selecione opcion 2 en el menú para ver la Factura\n";
-                     system("pause");
-                    break;
+                if (regresarMenu != 'S' && regresarMenu != 'N') {
+            cout << "Entrada no válida. Por favor ingrese 's' para sí o 'n' para no..\n";
+            cin >>regresarMenu;
                 }
+    }while (regresarMenu != 'S' && regresarMenu != 'N');
 
+            if (regresarMenu == 'S') {
+            cout << "Volviendo al menú.\n";
 
+            }else if (regresarMenu == 'N'){
+            cout << "Permanecer en datos. \n";
+            // Espera 3 segundos antes de continuar
+            this_thread::sleep_for(chrono::seconds(10));
+            break;
+             }
         }
 
 
+        break;
         case '2':
+            {
+
+
             limpiarPantalla(); // Limpiar pantalla antes de mostrar la factura
 
             if (!datos_ingresados) {
@@ -229,26 +248,31 @@ int main(){
             cout << "  IVA                              : ¢" << montoIVA << "\n";
             cout << "         TOTAL a Pagar en colones  : ¢" << totalapagar << "\n";
 
-            system("pause");
 
-            char volverMenu;
+
+          do{
             cout << "¿Desea volver al Menú? (s/n): ";
             cin >> volverMenu;
+            volverMenu = toupper(volverMenu);
 
-                if (volverMenu == 's' || volverMenu == 'S') {
-            cout << "Saliendo del programa...\n";
-                break;
-                } else if (volverMenu == 'n' || volverMenu == 'N') {
-            cout << "Menú de Factura. Esperando 10 segundos...\n";
-            // Espera 3 segundos antes de continuar
-            this_thread::sleep_for(chrono::seconds(10));
-                break;  // Si no quiere regresar, se sale del bucle
-                } else {
-                    cout << "Opción no válida. Por favor, responde con 's' o 'n'.\n" ;
+                if (volverMenu != 'S' && volverMenu != 'N') {
+            cout << "Entrada no válida. Por favor ingrese 's' para sí o 'n' para no..\n";
+            cin >> volverMenu;
                     }
+        }while (volverMenu != 'S' && volverMenu != 'N');
 
-             while (true);  // Continuar mientras quiera regresar al menú
+            if (volverMenu == 'S') {
+            cout << "Volviendo al menú.\n";
 
+            }else if (volverMenu == 'N'){
+                cout << "Permanecer en factura. \n";
+                 // Espera 3 segundos antes de continuar
+                this_thread::sleep_for(chrono::seconds(10));
+                break;
+            }
+
+        }
+        break;
         case '3':
             limpiarPantalla();
             cout << "Saliendo del programa...\n";
