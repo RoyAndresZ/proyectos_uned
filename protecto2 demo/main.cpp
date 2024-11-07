@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <windows.h>
 #include <vector>
-//prueba
+
 using namespace std;
 
 // Definiciones de clases
