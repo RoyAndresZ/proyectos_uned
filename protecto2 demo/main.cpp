@@ -35,17 +35,22 @@ public:
 
     Pedido() : cantidad(0) {}
     Pedido(string codigoPed, string codigoP, int cant, string cedulaEmp, string fecha, string est)
-        : codigoPedido(codigoPed), codigoPieza(codigoP), cantidad(cant), cedulaEmpleado(cedulaEmp), fechaSolicitud(fecha), estado(est) {}
+        : cantidad(cant), codigoPedido(codigoPed), codigoPieza(codigoP), cedulaEmpleado(cedulaEmp), fechaSolicitud(fecha), estado(est) {}
 };
 
 // Declaración de funciones
 void limpiarPantalla();
+void ingresarPieza();
 void reportePedidos();
 void reporteInventario();
 void ingresoPedido();
 void consultaPedido();
 void consultarPieza();
 void modificarPieza();
+void guardarInventario();
+void volverMenuInventario();
+
+string generarCodigoPieza();
 
 bool validarNumeroPedido(const string & pedido);
 bool validarNumeroPieza(const string & pieza);
@@ -61,6 +66,200 @@ void limpiarPantalla() {
     #endif
 }
 
+bool deseaReintentar() {
+    char volver;
+    cout << "¿Desea intentar de nuevo?" << endl;
+    cout << "Presione (s) para Sí o cualquier otra tecla para volver al menú: ";
+    cin >> volver;
+    volver = toupper(volver);
+    return volver == 'S';
+}
+
+// Función para validar que el costo y cantidad sean numéricos
+double ingresarNumeroPositivo(const string &mensaje) {
+    double valor;
+    while (true) {
+        cout << mensaje;
+        cin >> valor;
+        if (cin.fail() || valor <= 0) {
+            cout << "Entrada inválida. Ingrese un número positivo." << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else {
+            break;
+        }
+    }
+    return valor;
+}
+
+void ingresarPieza() {
+    char opcion;
+    Pieza pieza;
+    limpiarPantalla();
+    cout << "Ingresando pieza al inventario..." << endl;
+    do {
+        cout << "¿Desea ingresar el código de pieza manualmente? (s/n): ";
+        cin >> opcion;
+        opcion = toupper(opcion);
+
+        if (opcion == 'S') {
+            cout << "Código de pieza (ej. P00000001): ";
+            cin >> pieza.codigo;
+            while (!validarNumeroPieza(pieza.codigo)) {
+                cout << "Número de pedido inválido. Intente nuevamente: ";
+                cin >> pieza.codigo;
+            }
+        } else if (opcion == 'N') {
+            pieza.codigo = generarCodigoPieza();
+            cout << "Código de pieza generado automáticamente: " << pieza.codigo << endl;
+        } else {
+            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
+        }
+    } while (opcion != 'S' && opcion != 'N');
+
+    cout << "Nombre de la pieza: ";
+    cin >> pieza.nombre;
+
+    do{
+        cout << "Costo de la pieza por unidad: ";
+        cin >> pieza.costo;
+
+        if(cin.fail()  || pieza.costo <= 0){
+            cout << "Error: Ingrese un numero entero para costo de pieza.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+    }while (pieza.costo <= 0);
+
+    do{
+        cout << "Cantidad de piezas: ";
+        cin >> pieza.cantidad;
+        if (cin.fail() || pieza.cantidad <= 0) {
+        cout << "Error: Ingrese un número entero positivo para la cantidad de piezas.\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    } while (pieza.cantidad <= 0);
+
+    cout << "Nombre de la Empresa que provee las piezas: ";
+    cin >> pieza.empresa;
+    cout << "Factura de la empresa que provee las piezas: ";
+    cin >> pieza.factura;
+
+    do{
+        cout << "Número de cédula de quien ingresa las piezas al inventario: ";
+        cin >> pieza.cedula;
+        if (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0])) {
+            cout << "Cédula incorrecta, debe ser numérica y de 9 dígitos.\n";
+        }
+    } while (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0]));
+
+    inventario.push_back(pieza);
+    guardarInventario();
+    cout << "Pieza ingresada correctamente." << endl << endl;
+    system("pause");
+}
+
+void consultarPieza() {
+    string codigoBusqueda;
+    char volver;
+
+    limpiarPantalla();
+    cout << "Consultando pieza del inventario..." << endl;
+    cout << "Ingrese el código de la pieza a consultar (ej. P00000001): ";
+    cin >> codigoBusqueda;
+
+    if (!validarNumeroPieza(codigoBusqueda)) {
+        cout << "Número de pieza inválido." << endl;
+        if(deseaReintentar()){
+            consultarPieza();
+        }else {
+            return;
+        }
+    }
+
+    for (const auto &pieza : inventario) {
+        if (pieza.codigo == codigoBusqueda) {
+            cout << "Pieza encontrada:\n"
+                 << "Código: " << pieza.codigo << "\nNombre: " << pieza.nombre
+                 << "\nCosto: " << pieza.costo << "\nCantidad: " << pieza.cantidad
+                 << "\nEmpresa: " << pieza.empresa << "\nFactura: " << pieza.factura
+                 << "\nCédula de ingreso: " << pieza.cedula << endl;
+            system("pause");
+            return;
+        }
+    }
+    cout << "Pieza no encontrada." << endl;
+    if(deseaReintentar()){
+        consultarPieza();
+    }else {
+        return;
+    }
+}
+
+// Función para modificar una pieza en el inventario
+void modificarPieza() {
+    string codigoBusqueda;
+    limpiarPantalla();
+    cout << "Modificando pieza del inventario..." << endl;
+    cout << "Ingrese el código de la pieza a modificar: ";
+    cin >> codigoBusqueda;
+
+    ifstream inventario("INVENTARIO.TXT");
+    ofstream temp("TEMP.TXT");
+    string linea;
+    bool encontrada = false;
+
+    while (getline(inventario, linea)) {
+        stringstream ss(linea);
+        Pieza pieza;
+        getline(ss, pieza.codigo, ',');
+        getline(ss, pieza.nombre, ',');
+        ss >> pieza.costo;
+        ss.ignore(1, ',');
+        ss >> pieza.cantidad;
+        getline(ss, pieza.empresa, ',');
+        getline(ss, pieza.factura, ',');
+        getline(ss, pieza.cedula);
+
+        if (pieza.codigo == codigoBusqueda) {
+            encontrada = true;
+            cout << linea << endl;
+            cout << "Pieza encontrada:\n"
+                 << "Código: " << pieza.codigo << "\nNombre: " << pieza.nombre
+                 << "\nCosto: " << pieza.costo << "\nCantidad: " << pieza.cantidad
+                 << "\nEmpresa: " << pieza.empresa << "\nFactura: " << pieza.factura
+                 << "\nCédula de ingreso: " << pieza.cedula << endl << endl;
+
+            cout << "Solamente se puede modificar Costo y Cantidad. "<< endl;
+
+            pieza.costo = ingresarNumeroPositivo("Ingrese nuevo costo de la pieza: ");
+            pieza.cantidad = (int) ingresarNumeroPositivo("Ingrese nueva cantidad de piezas: ");
+
+
+            temp << pieza.codigo << "," << pieza.nombre << "," << pieza.costo << ","
+                 << pieza.cantidad << "," << pieza.empresa << ","
+                 << pieza.factura << "," << pieza.cedula << endl;
+            cout << "Pieza modificada correctamente." << endl;
+            system("pause");
+        } else {
+            temp << linea << endl;
+        }
+    }
+
+    if (!encontrada) {
+        cout << "Pieza no encontrada." << endl;
+        if(deseaReintentar()){
+            modificarPieza();
+        }else {
+            return;
+        }
+    }
+    inventario.close();
+    temp.close();
+    remove("INVENTARIO.TXT");
+    rename("TEMP.TXT", "INVENTARIO.TXT");
+}
 
 void guardarInventario() {
     ofstream file("INVENTARIO.TXT");
@@ -81,23 +280,6 @@ void guardarPedidos() {
 }
 
 
-void consultarPieza() {
-    string codigoBusqueda;
-    cout << "Ingrese el código de la pieza: ";
-    cin >> codigoBusqueda;
-
-    for (const auto &pieza : inventario) {
-        if (pieza.codigo == codigoBusqueda) {
-            cout << "Pieza encontrada:\n"
-                 << "Código: " << pieza.codigo << "\nNombre: " << pieza.nombre
-                 << "\nCosto: " << pieza.costo << "\nCantidad: " << pieza.cantidad
-                 << "\nEmpresa: " << pieza.empresa << "\nFactura: " << pieza.factura
-                 << "\nCédula de ingreso: " << pieza.cedula << endl;
-            return;
-        }
-    }
-    cout << "Pieza no encontrada." << endl;
-}
 
 void cargarInventario() {
     ifstream file("INVENTARIO.TXT");
@@ -233,67 +415,23 @@ void eliminarPieza() {
     rename("TEMP.TXT", "INVENTARIO.TXT");
 }
 
-
-// Función para validar que el costo y cantidad sean numéricos
-double ingresarNumeroPositivo(const string &mensaje) {
-    double valor;
-    while (true) {
-        cout << mensaje;
-        cin >> valor;
-        if (cin.fail() || valor <= 0) {
-            cout << "Entrada inválida. Ingrese un número positivo." << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        } else {
+void volverMenuInventario(){
+    char volver;
+    do{
+        cout << "¿Desea volver al menú Inventario? (s/n): ";
+        cin >> volver;
+        volver = toupper(volver);
+        if(volver == 'S'){
             break;
+        }else if (volver == 'N'){
+
+        }else{
+        cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
         }
-    }
-    return valor;
+    } while(volver!= 's') ;
 }
 
-// Función para modificar una pieza en el inventario
-void modificarPieza() {
-    string codigoBusqueda;
-    cout << "Ingrese el código de la pieza a modificar: ";
-    cin >> codigoBusqueda;
 
-    ifstream inventario("INVENTARIO.TXT");
-    ofstream temp("TEMP.TXT");
-    string linea;
-    bool encontrada = false;
-
-    while (getline(inventario, linea)) {
-        stringstream ss(linea);
-        Pieza pieza;
-        getline(ss, pieza.codigo, ',');
-        if (pieza.codigo == codigoBusqueda) {
-            encontrada = true;
-            cout << "Pieza encontrada: " << linea << endl;
-
-            cout << "Solamente se puede modificar Costo y Cantidad. "<< endl;
-
-            pieza.costo = ingresarNumeroPositivo("Ingrese nuevo costo de la pieza: ");
-            pieza.cantidad = (int) ingresarNumeroPositivo("Ingrese nueva cantidad de piezas: ");
-
-
-            temp << pieza.codigo << "," << pieza.nombre << "," << pieza.costo << ","
-                 << pieza.cantidad << "," << pieza.empresa << ","
-                 << pieza.factura << "," << pieza.cedula << endl;
-            cout << "Pieza modificada correctamente." << endl;
-        } else {
-            temp << linea << endl;
-        }
-    }
-
-    if (!encontrada) {
-        cout << "Pieza no encontrada." << endl;
-    }
-
-    inventario.close();
-    temp.close();
-    remove("INVENTARIO.TXT");
-    rename("TEMP.TXT", "INVENTARIO.TXT");
-}
 
 bool validarNumeroPedido(const string &pedido) {
     if (pedido.length() != 10 || pedido.substr(0, 2) != "PE") return false;
@@ -415,7 +553,6 @@ int main() {
         switch(opcionPrincipal){
 
             case 1:
-
                 do{
                     cout << "            INVENTARIO         "   << endl;
                     cout << "a. Ingresar pieza al inventario"   << endl;
@@ -425,138 +562,22 @@ int main() {
                     cout << "     Seleccione una opción:     "  << endl;
                     cin >> opcionsubMenu;
 
-
-
                     switch(opcionsubMenu){
 
-
                     case 'a':
-                        do{
-                            Pieza pieza;
-
-                            cout << "Ingresando pieza al inventario..." << endl;
-                            do {
-                                cout << "¿Desea ingresar el código de pieza manualmente? (s/n): ";
-                                cin >> opcion;
-                                opcion = toupper(opcion);
-
-
-                                if (opcion == 'S') {
-                                    cout << "Código de pieza (ej. P00000001): ";
-                                    cin >> pieza.codigo;
-                                    while (!validarNumeroPieza(pieza.codigo)) {
-                                        cout << "Número de pedido inválido. Intente nuevamente: ";
-                                        cin >> pieza.codigo;
-                                    }
-                                } else if (opcion == 'N') {
-                                    pieza.codigo = generarCodigoPieza();
-                                    cout << "Código de pieza generado automáticamente: " << pieza.codigo << endl;
-                                } else {
-                                    cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
-                                }
-                            } while (opcion != 'S' && opcion != 'N');
-
-
-                            cout << "Nombre de la pieza: ";
-                                cin >> pieza.nombre;
-
-                            do{
-                                cout << "Costo de la pieza por unidad: ";
-                                cin >> pieza.costo;
-
-                                if(cin.fail()  || pieza.costo <= 0){
-                                    cout << "Error: Ingrese un numero entero para costo de pieza.\n";
-                                    cin.clear();
-                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                                    }
-                            }while (pieza.costo <= 0);
-
-                            do{
-                                cout << "Cantidad de piezas: ";
-                                cin >> pieza.cantidad;
-
-                                if (cin.fail() || pieza.cantidad <= 0) {
-                                cout << "Error: Ingrese un número entero positivo para la cantidad de piezas.\n";
-                                cin.clear();
-                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                                }
-                            } while (pieza.cantidad <= 0);
-
-
-                            cout << "Nombre de la Empresa que provee las piezas: ";
-                            cin >> pieza.empresa;
-                            cout << "Factura de la empresa que provee las piezas: ";
-                            cin >> pieza.factura;
-
-                            do{
-                                cout << "Número de cédula de quien ingresa las piezas al inventario: ";
-                                cin >> pieza.cedula;
-                                    if (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0])) {
-                                  }  cout << "Cédula incorrecta, debe ser numérica y de 9 dígitos.\n";
-                                }          while (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0]));
-
-                                inventario.push_back(pieza);
-                                guardarInventario();
-                                cout << "Pieza ingresada correctamente." << endl;
-
-                            cout << "¿Desea volver al menú Inventario? (s/n): ";
-                            cin >> volver;
-                            volver = toupper(volver);
-                            if(volver == 'S'){
-                                break;
-                            }else if (volver == 'N'){
-
-                            }else{
-                                cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
-                            }
-                           }while(volver!= 's') ;
-                           break;
-
-
+                        ingresarPieza();
                         limpiarPantalla();
-
+                        break;
 
                     case 'b':
-                        do{
-                        cout << "Consultando pieza del inventario..." << endl;
-                            consultarPieza();
-
-
-                        cout << "¿Desea volver al menú Inventario? (s/n): ";
-                        cin >> volver;
-                        volver = toupper(volver);
-                        if(volver == 'S'){
-                            break;
-                        }else if (volver == 'N'){
-
-                        }else{
-                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
-                        }
-                       }while(volver!= 's') ;
-                       break;
-
-                            limpiarPantalla();
+                        consultarPieza();
+                        limpiarPantalla();
+                        break;
 
                     case 'c':
-                        do{
-                        cout << "Modificando pieza del inventario..." << endl;
-                            modificarPieza();
-
-                        cout << "¿Desea volver al menú Inventario? (s/n): ";
-                        cin >> volver;
-                        volver = toupper(volver);
-                        if(volver == 'S'){
-                            break;
-                        }else if (volver == 'N'){
-
-                        }else{
-                            cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
-                        }
-                       }while(volver!= 's') ;
-                       break;
-
-                            limpiarPantalla();
-
+                        modificarPieza();
+                        limpiarPantalla();
+                        break;
                     case 'd':
                         do{
                         cout << "Eliminando pieza del inventario..." << endl;
@@ -578,9 +599,9 @@ int main() {
 
 
                     default:
-                        limpiarPantalla();
                         cout << "Opción inválida, intente de nuevo." << endl;
-                        cout << endl << endl;
+                        system("pause");
+                        limpiarPantalla();
                         break;
 
                      }
