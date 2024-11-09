@@ -81,7 +81,7 @@ void guardarInventario() {
              << "," << pieza.cedula << endl;
     }
 }
-
+// Función para guardar los pedidos en un archivo de texto
 void guardarPedidos() {
     ofstream file("PEDIDOS.TXT");
     for (const auto &pedido : pedidos) {
@@ -91,12 +91,13 @@ void guardarPedidos() {
     }
 }
 
-
+// Función para consultar una pieza en el inventario
 void consultarPieza() {
     string codigoBusqueda;
     cout << "Ingrese el código de la pieza: ";
     cin >> codigoBusqueda;
 
+    // Buscar la pieza en el inventario
     for (const auto &pieza : inventario) {
         if (pieza.codigo == codigoBusqueda) {
             cout << "Pieza encontrada:\n"
@@ -132,7 +133,7 @@ void cargarInventario() {
     }
     file.close();
 }
-
+// Función para cargar los pedidos desde un archivo de texto
 void cargarPedidos() {
     ifstream file("PEDIDOS.TXT");
     if (!file.is_open()) return;
@@ -149,17 +150,17 @@ void cargarPedidos() {
         getline(ss, pedido.fechaSolicitud, ',');
         getline(ss, pedido.estado, ',');
 
-        pedidos.push_back(pedido);
+        pedidos.push_back(pedido);// Agrega el pedido al vector de pedidos
     }
     file.close();
 }
 
-
+// Función para consultar un pedido específico
 void consultaPedido() {
     string codigoBusqueda;
     cout << "Ingrese el código del pedido: ";
     cin >> codigoBusqueda;
-
+     // Buscar el pedido en el vector
     for (const auto &pedido : pedidos) {
         if (pedido.codigoPedido == codigoBusqueda) {
             cout << "Pedido encontrado:\n"
@@ -175,28 +176,62 @@ void consultaPedido() {
     cout << "Pedido no encontrado." << endl;
 }
 
-void reporteInventario() {
-    cout << "\n--- Reporte de Inventario ---" << endl;
-    for (const auto &pieza : inventario) {
-        cout << "Código: " << pieza.codigo << ", Nombre: " << pieza.nombre << ", Costo: " << pieza.costo
-             << ", Cantidad: " << pieza.cantidad << ", Empresa: " << pieza.empresa
-             << ", Factura: " << pieza.factura << ", Cédula: " << pieza.cedula << endl;
-    }
-}
+void leerPedidosDesdeArchivo(const string& archivo) {
+    ifstream file(archivo);
 
+    if (!file.is_open()) {  // Comprobamos si el archivo se abrió correctamente
+        cout << "No se pudo abrir el archivo." << endl;
+        return;
+    }
+
+    Pedido pedido;
+    string line;
+    while (getline(file, line)) {  // Leemos línea por línea
+        stringstream ss(line);
+        ss >> pedido.codigoPedido
+           >> pedido.codigoPieza
+           >> pedido.cantidad
+           >> pedido.cedulaEmpleado
+           >> pedido.fechaSolicitud
+           >> pedido.estado;
+
+        pedidos.push_back(pedido);  // Agregamos el pedido al vector
+    }
+
+    file.close();
+}
+// Función para mostrar el reporte de pedidos
 void reportePedidos() {
     cout << "\n--- Reporte de Pedidos ---" << endl;
+
     if (pedidos.empty()) {
         cout << "No hay pedidos registrados." << endl;
         return;
     }
+
+    // Recorremos el arreglo de pedidos e imprimimos cada uno
     for (const auto &pedido : pedidos) {
-         cout << "Código Pedido: " << pedido.codigoPedido << ", Código Pieza: " << pedido.codigoPieza
-              << ", Cantidad: " << pedido.cantidad << ", Cedula Empleado: " << pedido.cedulaEmpleado
-              << ", Fecha Solicitud: " << pedido.fechaSolicitud << ", Estado: " << pedido.estado << endl;
+        cout << "  Código Pedido: " << pedido.codigoPedido
+             << "| Código Pieza: " << pedido.codigoPieza
+             << "| Cantidad: " << pedido.cantidad
+             << "| Cédula quien solicita pieza(s): " << pedido.cedulaEmpleado
+             << "| Fecha Solicitud: " << pedido.fechaSolicitud
+             << "| Estado: " << pedido.estado << endl;
+        cout << "--------------------------------------------------------------------------------------------------------------------------------------------" << endl;
     }
 }
 
+// Función para mostrar el reporte de inventario
+void reporteInventario() {
+    cout << "\n--- Reporte de Inventario ---" << endl;
+    for (const auto &pieza : inventario) {
+        cout << "Código Pieza: " << pieza.codigo << ", Nombre Pieza: " << pieza.nombre << ", Costo: " << pieza.costo
+             << ", Cantidad: " << pieza.cantidad << ", Nombre de la Empresa: " << pieza.empresa
+             << ", Factura: " << pieza.factura << ", Cédula quien ingresa pieza: " << pieza.cedula << endl;
+    }
+}
+
+// Función para eliminar una pieza del inventario
 void eliminarPieza() {
     string codigoBusqueda;
     cout << "Ingrese el código de la pieza a eliminar: ";
@@ -208,7 +243,7 @@ void eliminarPieza() {
     bool encontrada = false;
     string linea;
 
-
+    // Función para eliminar una pieza del inventario
     if (!archivo.is_open()) {
         cout << "Error al abrir INVENTARIO.TXT para lectura." << endl;
         return;
@@ -218,7 +253,7 @@ void eliminarPieza() {
         return;
     }
 
-
+    // Función para eliminar una pieza del inventario
     while (getline(archivo, linea)) {
 
         istringstream ss(linea);
@@ -226,20 +261,28 @@ void eliminarPieza() {
         getline(ss, codigoPieza, ',');
 
         if (codigoPieza == codigoBusqueda) {
+            char confirmacion;
+            cout << "Pieza con código " << codigoBusqueda << " encontrada. ¿Esta Seguro de eliminar pieza? (s/n): ";
+            cin >> confirmacion;
+            confirmacion = toupper(confirmacion);
 
-            cout << "Pieza con código " << codigoBusqueda << " eliminada." << endl;
-            encontrada = true;
-        } else {
-
+            if (confirmacion == 'S') {
+                cout << "Pieza con código " << codigoBusqueda << " eliminada." << endl;
+                encontrada = true;
+            } else {
+                cout << "Operación cancelada. La pieza no se eliminó." << endl;
+                encontrada = true;
+                temp << linea << endl; // Guardar líneas que no coincidan con el código buscado
+            }
+        }else{
             temp << linea << endl;
         }
-    }
+      }
+        if (!encontrada) {
+            cout << "Pieza con código " << codigoBusqueda << " no encontrada." << endl;
+        }
 
-    if (!encontrada) {
-        cout << "Pieza con código " << codigoBusqueda << " no encontrada." << endl;
-    }
-
-
+    // Cerrar archivos y actualizar el archivo de inventario
     archivo.close();
     temp.close();
 
@@ -272,44 +315,66 @@ void modificarPieza() {
     cout << "Ingrese el código de la pieza a modificar: ";
     cin >> codigoBusqueda;
 
-    ifstream inventario("INVENTARIO.TXT");
-    ofstream temp("TEMP.TXT");
+    ifstream inventario("INVENTARIO.TXT"); // Archivo original
+    ofstream temp("TEMP.TXT"); // Archivo temporal para escribir los datos modificados
     string linea;
     bool encontrada = false;
 
+    // Verificar si se pudo abrir el archivo de inventario
+    if (!inventario.is_open() || !temp.is_open()) {
+        cout << "Error al abrir el archivo." << endl;
+        return;
+    }
+
+    // Leer cada línea del archivo original
     while (getline(inventario, linea)) {
         stringstream ss(linea);
         Pieza pieza;
+
+        // Leer todos los campos de la pieza desde el archivo
         getline(ss, pieza.codigo, ',');
+        getline(ss, pieza.nombre, ',');
+        ss >> pieza.costo;
+        ss.ignore(1); // Ignorar la coma
+        ss >> pieza.cantidad;
+        ss.ignore(1); // Ignorar la coma
+        getline(ss, pieza.empresa, ',');
+        getline(ss, pieza.factura, ',');
+        getline(ss, pieza.cedula, ',');
+
+        // Si la pieza encontrada coincide con el código buscado, actualizar solo los campos deseados
         if (pieza.codigo == codigoBusqueda) {
             encontrada = true;
             cout << "Pieza encontrada: " << linea << endl;
+            cout << "Solamente se puede modificar Costo y Cantidad." << endl;
 
-            cout << "Solamente se puede modificar Costo y Cantidad. "<< endl;
-
+            // Solicitar nuevo costo y cantidad al usuario
             pieza.costo = ingresarNumeroPositivo("Ingrese nuevo costo de la pieza: ");
-            pieza.cantidad = (int) ingresarNumeroPositivo("Ingrese nueva cantidad de piezas: ");
-
-
-            temp << pieza.codigo << "," << pieza.nombre << "," << pieza.costo << ","
-                 << pieza.cantidad << "," << pieza.empresa << ","
-                 << pieza.factura << "," << pieza.cedula << endl;
+            pieza.cantidad = (int)ingresarNumeroPositivo("Ingrese nueva cantidad de piezas: ");
             cout << "Pieza modificada correctamente." << endl;
-        } else {
-            temp << linea << endl;
         }
+
+        // Escribir todos los datos de la pieza al archivo temporal
+        temp << pieza.codigo << "," << pieza.nombre << "," << pieza.costo << ","
+             << pieza.cantidad << "," << pieza.empresa << "," << pieza.factura
+             << "," << pieza.cedula << endl;
+             temp.flush();
     }
 
+    // Informar si la pieza no se encontró en el inventario
     if (!encontrada) {
         cout << "Pieza no encontrada." << endl;
     }
 
+    // Cerrar archivos y renombrar el archivo temporal para reemplazar el original
     inventario.close();
     temp.close();
     remove("INVENTARIO.TXT");
     rename("TEMP.TXT", "INVENTARIO.TXT");
 }
 
+
+// Función para validar el número de pedido
 bool validarNumeroPedido(const string &pedido) {
     if (pedido.length() != 10 || pedido.substr(0, 2) != "PE") return false;
     for (size_t i = 2; i < pedido.length(); ++i) {
@@ -317,7 +382,7 @@ bool validarNumeroPedido(const string &pedido) {
     }
     return true;
 }
-
+// Función para validar el número de pieza
 bool validarNumeroPieza(const string &pieza) {
     if (pieza.length() != 9 || pieza[0] != 'P') return false;
     for (size_t i = 1; i < pieza.length(); ++i) {
@@ -546,7 +611,7 @@ int main() {
                                 cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                             }
                        }while(volver!= 's') ;
-
+                        break;
                     }
                     case 'c':{
                         do{
@@ -818,16 +883,16 @@ int main() {
             case 5:
                 limpiarPantalla();
                 cout << "Salir" ;
-
                 break;
 
             default:
-                limpiarPantalla();
                 cout << "Opción inválida, intente de nuevo." << endl;
                 break;
+                system("pause");
+
 
             }
-            }while (opcionPrincipal != 5);
+        }while (opcionPrincipal != 5);
 
 
      return 0;
