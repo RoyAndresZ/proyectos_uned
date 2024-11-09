@@ -510,8 +510,9 @@ int main() {
 
                     switch(opcionsubMenu){
                     case 'a':{
-                        do{
                             limpiarPantalla();
+                        do{
+
 
                             cout << "Ingresando pieza al inventario..." << endl;
                             do {
@@ -570,10 +571,11 @@ int main() {
                             do{
                                 cout << "Número de cédula de quien ingresa las piezas al inventario: ";
                                 cin >> pieza.cedula;
-                                if (pieza.cedula.length() != 9 || !all_of(pieza.cedula.begin(), pieza.cedula.end(), ::isdigit)) {
-                                }  cout << "Cédula incorrecta, debe ser numérica y de 9 dígitos.\n";
+                                if (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0])) {
+                                    cout << "Cédula incorrecta, debe ser numérica y de 9 dígitos.\n";
+                                }
 
-                            }while (pieza.cedula.length() != 9 || !all_of(pieza.cedula.begin(), pieza.cedula.end(), ::isdigit));
+                            }while (pieza.cedula.length() != 9 || !isdigit(pieza.cedula[0]));
 
                             inventario.push_back(pieza);
                             guardarInventario();
@@ -590,13 +592,14 @@ int main() {
                                 cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                             }
                            }while(volver!= 's') ;
+                           limpiarPantalla();
                            break;
                         }
 
                     case 'b':{
+                            limpiarPantalla();
                             do{
 
-                            limpiarPantalla();
                             cout << "Consultando pieza del inventario..." << endl;
                             consultarPieza();
 
@@ -611,6 +614,7 @@ int main() {
                                 cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                             }
                        }while(volver!= 's') ;
+                        limpiarPantalla();
                         break;
                     }
                     case 'c':{
@@ -630,6 +634,7 @@ int main() {
                                 cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                             }
                        }while(volver!= 's') ;
+                       limpiarPantalla();
                        break;
                     }
 
@@ -653,6 +658,7 @@ int main() {
                                 cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                             }
                        }while(volver!= 's') ;
+                       limpiarPantalla();
                        break;
                     }
 
@@ -709,8 +715,10 @@ int main() {
                                 do{cout << "Número de identificación del empleado: ";
                                     cin >> pedido.cedulaEmpleado;
                                     if (pedido.cedulaEmpleado.length() != 9 || !isdigit(pedido.cedulaEmpleado[0])) {
-                                    }   cout << "Cédula incorrecta, debe ser numérica y de 9 dígitos.\n";
+                                            cout << "Cédula incorrecta, debe ser numérica y de 9 dígitos.\n";
+                                    }
                                 }while (pedido.cedulaEmpleado.length() != 9 || !isdigit(pedido.cedulaEmpleado[0]));
+
 
                                 cout << "Fecha solicitud, en formato(DD/MM/YYYY): ";
                                 cin >> pedido.fechaSolicitud;
@@ -733,6 +741,7 @@ int main() {
                                     cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                                 }
                                }while(volver!= 's') ;
+                               limpiarPantalla();
                         }   break;
 
 
@@ -753,6 +762,7 @@ int main() {
                                     cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                                 }
                            }while(volver!= 's') ;
+                           limpiarPantalla();
                            break;
                         }
 
@@ -789,6 +799,7 @@ int main() {
                                     cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                                 }
                            }while(volver!= 's') ;
+                           limpiarPantalla();
                            break;
                         }
 
@@ -826,6 +837,7 @@ int main() {
                                     cout << "Opción no válida. Por favor, ingrese 's' para sí o 'n' para no." << endl;
                                 }
                            }while(volver!= 's') ;
+                           limpiarPantalla();
                            break;
                         }
 
